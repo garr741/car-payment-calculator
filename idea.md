@@ -1,4 +1,4 @@
-repo_url: 
+repo_url: https://github.com/garr741/car-payment-calculator
 static_site: true
 
 # Car Payment Calculator
@@ -20,6 +20,7 @@ static_site: true
 - Simple monthly payment calculator (loan amount, interest rate, term, down payment)
 - Public-facing tool — clean, intuitive, no account needed
 - Dark mode UI with glowing/neon aesthetic
+- Deep space pixel background with tiny twinkling stars (random, subtle)
 - Mobile-responsive
 - Static site (HTML/CSS/JS only)
 

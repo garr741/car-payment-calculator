@@ -1,5 +1,463 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Car Payment Calculator</title></head>
-<body><h1>Car Payment Calculator</h1><p>Coming soon.</p></body>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Car Payment Calculator</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --neon-cyan: #00f0ff;
+    --neon-purple: #bb44ff;
+    --neon-pink: #ff2d95;
+    --bg-dark: #0a0a12;
+    --bg-card: #12121e;
+    --bg-input: #1a1a2e;
+    --text: #e0e0f0;
+    --text-dim: #7a7a9a;
+    --glow-cyan: 0 0 20px rgba(0, 240, 255, 0.3), 0 0 40px rgba(0, 240, 255, 0.1);
+    --glow-purple: 0 0 20px rgba(187, 68, 255, 0.3), 0 0 40px rgba(187, 68, 255, 0.1);
+    --glow-pink: 0 0 20px rgba(255, 45, 149, 0.3);
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg-dark);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px 16px;
+    background-image:
+      radial-gradient(ellipse at 20% 50%, rgba(0, 240, 255, 0.03) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 50%, rgba(187, 68, 255, 0.03) 0%, transparent 50%);
+  }
+
+  .container {
+    width: 100%;
+    max-width: 520px;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .subtitle {
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    margin-bottom: 32px;
+  }
+
+  .card {
+    background: var(--bg-card);
+    border-radius: 16px;
+    padding: 28px 24px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(255,255,255,0.05);
+    box-shadow: 0 4px 30px rgba(0,0,0,0.4);
+  }
+
+  .field { margin-bottom: 22px; }
+  .field:last-child { margin-bottom: 0; }
+
+  .field label {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+  }
+
+  .field label .value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--neon-cyan);
+    text-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  /* Text inputs */
+  .input-wrap {
+    position: relative;
+  }
+
+  .input-wrap .prefix {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-dim);
+    font-size: 1rem;
+    pointer-events: none;
+  }
+
+  .input-wrap input[type="text"] {
+    width: 100%;
+    background: var(--bg-input);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 12px 14px 12px 28px;
+    font-size: 1.1rem;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+
+  .input-wrap input[type="text"]:focus {
+    border-color: var(--neon-cyan);
+    box-shadow: var(--glow-cyan);
+  }
+
+  /* Range sliders */
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--bg-input);
+    outline: none;
+    cursor: pointer;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--neon-cyan);
+    box-shadow: 0 0 12px rgba(0,240,255,0.6), 0 0 30px rgba(0,240,255,0.2);
+    cursor: pointer;
+    transition: box-shadow 0.2s;
+  }
+
+  input[type="range"]::-webkit-slider-thumb:hover {
+    box-shadow: 0 0 18px rgba(0,240,255,0.8), 0 0 40px rgba(0,240,255,0.3);
+  }
+
+  input[type="range"]::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--neon-cyan);
+    box-shadow: 0 0 12px rgba(0,240,255,0.6), 0 0 30px rgba(0,240,255,0.2);
+    border: none;
+    cursor: pointer;
+  }
+
+  /* Results card */
+  .results-card {
+    background: linear-gradient(135deg, rgba(0,240,255,0.05), rgba(187,68,255,0.05));
+    border: 1px solid rgba(0,240,255,0.15);
+    box-shadow: 0 0 30px rgba(0,240,255,0.05);
+  }
+
+  .result-main {
+    text-align: center;
+    padding: 8px 0 24px;
+  }
+
+  .result-main .label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+  }
+
+  .result-main .amount {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--neon-cyan);
+    text-shadow: 0 0 20px rgba(0,240,255,0.4), 0 0 60px rgba(0,240,255,0.15);
+    line-height: 1.1;
+  }
+
+  .result-main .per-month {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
+
+  .result-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .detail-item .label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-dim);
+    margin-bottom: 4px;
+  }
+
+  .detail-item .val {
+    font-size: 1.15rem;
+    font-weight: 700;
+  }
+
+  .detail-item.interest .val {
+    color: var(--neon-pink);
+    text-shadow: var(--glow-pink);
+  }
+
+  .detail-item.total .val {
+    color: var(--neon-purple);
+    text-shadow: var(--glow-purple);
+  }
+
+  /* Breakdown bar */
+  .breakdown {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .breakdown .bar-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+
+  .bar-track {
+    width: 100%;
+    height: 10px;
+    background: var(--bg-input);
+    border-radius: 5px;
+    overflow: hidden;
+    display: flex;
+  }
+
+  .bar-principal {
+    height: 100%;
+    background: linear-gradient(90deg, var(--neon-cyan), #00c8d4);
+    border-radius: 5px 0 0 5px;
+    transition: width 0.4s ease;
+    box-shadow: 0 0 8px rgba(0,240,255,0.3);
+  }
+
+  .bar-interest {
+    height: 100%;
+    background: linear-gradient(90deg, var(--neon-pink), #ff5faa);
+    border-radius: 0 5px 5px 0;
+    transition: width 0.4s ease;
+    box-shadow: 0 0 8px rgba(255,45,149,0.3);
+  }
+
+  .bar-legend {
+    display: flex;
+    gap: 16px;
+    margin-top: 8px;
+    font-size: 0.7rem;
+    color: var(--text-dim);
+  }
+
+  .bar-legend span::before {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    margin-right: 5px;
+    vertical-align: middle;
+  }
+
+  .bar-legend .leg-principal::before { background: var(--neon-cyan); }
+  .bar-legend .leg-interest::before { background: var(--neon-pink); }
+
+  @media (max-width: 480px) {
+    body { padding: 24px 12px; }
+    .card { padding: 22px 18px; }
+    .result-main .amount { font-size: 2.4rem; }
+    h1 { font-size: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <h1>Car Payment Calculator</h1>
+    <p class="subtitle">Estimate your monthly auto loan payment</p>
+
+    <div class="card">
+      <div class="field">
+        <label>Vehicle Price <span class="value" id="priceDisplay">$30,000</span></label>
+        <div class="input-wrap">
+          <span class="prefix">$</span>
+          <input type="text" id="price" value="30,000" inputmode="numeric">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Down Payment <span class="value" id="downDisplay">$5,000</span></label>
+        <div class="input-wrap">
+          <span class="prefix">$</span>
+          <input type="text" id="down" value="5,000" inputmode="numeric">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Loan Term <span class="value" id="termDisplay">60 months</span></label>
+        <input type="range" id="term" min="12" max="84" step="12" value="60">
+      </div>
+
+      <div class="field">
+        <label>Interest Rate <span class="value" id="rateDisplay">6.5%</span></label>
+        <input type="range" id="rate" min="0" max="20" step="0.1" value="6.5">
+      </div>
+    </div>
+
+    <div class="card results-card">
+      <div class="result-main">
+        <div class="label">Monthly Payment</div>
+        <div class="amount" id="monthly">$483</div>
+        <div class="per-month">per month</div>
+      </div>
+
+      <div class="result-details">
+        <div class="detail-item interest">
+          <div class="label">Total Interest</div>
+          <div class="val" id="totalInterest">$3,972</div>
+        </div>
+        <div class="detail-item total">
+          <div class="label">Total Cost</div>
+          <div class="val" id="totalCost">$28,972</div>
+        </div>
+      </div>
+
+      <div class="breakdown">
+        <div class="bar-label">
+          <span>Principal vs Interest</span>
+        </div>
+        <div class="bar-track">
+          <div class="bar-principal" id="barPrincipal" style="width:86%"></div>
+          <div class="bar-interest" id="barInterest" style="width:14%"></div>
+        </div>
+        <div class="bar-legend">
+          <span class="leg-principal">Principal</span>
+          <span class="leg-interest">Interest</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const $ = id => document.getElementById(id);
+
+  const els = {
+    price: $('price'),
+    down: $('down'),
+    term: $('term'),
+    rate: $('rate'),
+    priceDisplay: $('priceDisplay'),
+    downDisplay: $('downDisplay'),
+    termDisplay: $('termDisplay'),
+    rateDisplay: $('rateDisplay'),
+    monthly: $('monthly'),
+    totalInterest: $('totalInterest'),
+    totalCost: $('totalCost'),
+    barPrincipal: $('barPrincipal'),
+    barInterest: $('barInterest'),
+  };
+
+  function parseNum(str) {
+    return parseFloat(str.replace(/[^0-9.]/g, '')) || 0;
+  }
+
+  function formatMoney(n) {
+    return '$' + Math.round(n).toLocaleString('en-US');
+  }
+
+  function formatInput(val) {
+    const num = parseNum(val);
+    return num ? num.toLocaleString('en-US') : '0';
+  }
+
+  function calculate() {
+    const price = parseNum(els.price.value);
+    const down = parseNum(els.down.value);
+    const months = parseInt(els.term.value);
+    const annualRate = parseFloat(els.rate.value);
+
+    const principal = Math.max(price - down, 0);
+    const monthlyRate = annualRate / 100 / 12;
+
+    let payment;
+    if (monthlyRate === 0) {
+      payment = months > 0 ? principal / months : 0;
+    } else {
+      payment = principal * (monthlyRate * Math.pow(1 + monthlyRate, months)) / (Math.pow(1 + monthlyRate, months) - 1);
+    }
+
+    if (!isFinite(payment)) payment = 0;
+
+    const totalPaid = payment * months;
+    const totalInt = totalPaid - principal;
+
+    els.priceDisplay.textContent = formatMoney(price);
+    els.downDisplay.textContent = formatMoney(down);
+    els.termDisplay.textContent = months + ' months';
+    els.rateDisplay.textContent = annualRate.toFixed(1) + '%';
+    els.monthly.textContent = formatMoney(payment);
+    els.totalInterest.textContent = formatMoney(totalInt);
+    els.totalCost.textContent = formatMoney(totalPaid);
+
+    const pPct = totalPaid > 0 ? (principal / totalPaid * 100) : 100;
+    els.barPrincipal.style.width = pPct + '%';
+    els.barInterest.style.width = (100 - pPct) + '%';
+  }
+
+  // Format text inputs on blur
+  ['price', 'down'].forEach(id => {
+    els[id].addEventListener('input', calculate);
+    els[id].addEventListener('blur', function() {
+      this.value = formatInput(this.value);
+    });
+  });
+
+  ['term', 'rate'].forEach(id => {
+    els[id].addEventListener('input', calculate);
+  });
+
+  // Slider track fill via CSS gradient
+  function updateSliderTrack(slider, color) {
+    const pct = (slider.value - slider.min) / (slider.max - slider.min) * 100;
+    slider.style.background = `linear-gradient(90deg, ${color} 0%, ${color} ${pct}%, #1a1a2e ${pct}%, #1a1a2e 100%)`;
+  }
+
+  ['term', 'rate'].forEach(id => {
+    els[id].addEventListener('input', () => updateSliderTrack(els[id], '#00f0ff'));
+    updateSliderTrack(els[id], '#00f0ff');
+  });
+
+  calculate();
+</script>
+</body>
 </html>
