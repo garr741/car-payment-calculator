@@ -302,6 +302,29 @@
     image-rendering: pixelated;
   }
 
+  @keyframes shootingStar {
+    0% {
+      transform: translate(-100px, -100px);
+      opacity: 1;
+    }
+    100% {
+      transform: translate(100vw, 100vh);
+      opacity: 0;
+    }
+  }
+
+  .shooting-star {
+    position: fixed;
+    width: 2px;
+    height: 2px;
+    background: #00f0ff;
+    border-radius: 50%;
+    box-shadow: 0 0 6px rgba(0, 240, 255, 0.8), 0 0 12px rgba(0, 240, 255, 0.5);
+    z-index: 0;
+    pointer-events: none;
+    animation: shootingStar 2s ease-in forwards;
+  }
+
   .container { position: relative; z-index: 1; }
 
   @media (max-width: 480px) {
@@ -516,6 +539,41 @@
     window.addEventListener('resize', resize);
     resize();
     requestAnimationFrame(draw);
+  })();
+
+  // Shooting stars every 10-15 seconds
+  (() => {
+    function createShootingStar() {
+      const star = document.createElement('div');
+      star.className = 'shooting-star';
+      
+      // Random start position (top or left edge)
+      const startX = Math.random() * window.innerWidth;
+      const startY = -50;
+      
+      star.style.left = startX + 'px';
+      star.style.top = startY + 'px';
+      
+      // Random angle (roughly top-left to bottom-right diagonal)
+      const angle = Math.random() * 30 + 30; // 30-60 degrees
+      star.style.transform = `rotate(${angle}deg)`;
+      
+      document.body.appendChild(star);
+      
+      // Remove after animation
+      setTimeout(() => star.remove(), 2000);
+    }
+
+    function scheduleNextShootingStar() {
+      const delay = 10000 + Math.random() * 5000; // 10-15 seconds
+      setTimeout(() => {
+        createShootingStar();
+        scheduleNextShootingStar();
+      }, delay);
+    }
+
+    // Start the sequence
+    scheduleNextShootingStar();
   })();
 </script>
 </body>

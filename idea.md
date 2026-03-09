@@ -21,6 +21,7 @@ static_site: true
 - Public-facing tool — clean, intuitive, no account needed
 - Dark mode UI with glowing/neon aesthetic
 - Deep space pixel background with tiny twinkling stars (random, subtle)
+- Shooting stars appear every 10-15 seconds (smooth diagonal animation, neon glow)
 - Mobile-responsive
 - Static site (HTML/CSS/JS only)
 
